@@ -74,6 +74,11 @@ EOF
 
 pbcopy <<<"$response"
 
+# clean up:
+## remove the image file
+rm -f "$image_file"
+
+## kill the ollama serve process if we started it
 if [ -n "$ollama_pid" ]; then
 	kill $ollama_pid
 fi
