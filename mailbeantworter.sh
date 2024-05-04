@@ -21,11 +21,7 @@ else
 fi
 
 # 0.
-## Get the current date and time
-timestamp=$(date '+%Y%m%d-%H%M%S')
-
-## Set the filename for the screenshot using the timestamp
-image_file="$HOME/Desktop/Screenshot_${timestamp}.png"
+image_file=$(mktemp).png
 
 ## Take the screenshot using the screencapture command
 screencapture -i -t png "$image_file"
