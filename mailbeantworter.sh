@@ -10,14 +10,14 @@ set -e -u
 # 4. Print the response from the llama3 server
 # 99. Kill `ollama serve` if we started it
 
-# -1
-if nc -z localhost 11434; then
-	echo "ollama serve already running"
-	ollama_pid=""
+OLLAMA_SERVER=localhost
+OLLAMA_PORT=11434
+
+if nc -z $OLLAMA_SERVER $OLLAMA_PORT; then
+	:
 else
-	echo "starting ollama serve"
-	ollama serve &>/dev/null &
-	ollama_pid=$!
+	echo "ollama server required. Start with \`brew services start ollama\`"
+	exit 1
 fi
 
 # 0.
@@ -63,7 +63,7 @@ prompt='{
 }'
 
 # remove single newlines. Keep double newlines
-response=$(curl -Ns http://localhost:11434/api/generate -d "$prompt" | jq -r .response)
+response=$(curl -Ns http://$OLLAMA_SERVER:$OLLAMA_PORT/api/generate -d "$prompt" | jq -r .response)
 
 cat <<EOF
 
@@ -75,10 +75,5 @@ EOF
 pbcopy <<<"$response"
 
 # clean up:
-## remove the image file
+## remove the temporary image file
 rm -f "$image_file"
-
-## kill the ollama serve process if we started it
-if [ -n "$ollama_pid" ]; then
-	kill $ollama_pid
-fi
